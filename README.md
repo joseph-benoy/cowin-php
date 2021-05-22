@@ -4,9 +4,9 @@ PHP SDK based on public cowin api.
 
 ## Usage
 
-Extend the class with ```Api\Cowin``` class or simply instantiate the class ```Api\Cowin```.
+Extend the class with ```Api\Cowin``` or simply instantiate the class ```Api\Cowin```.
 ```php
-class api{
+class Cowin{
     function get_states();
     function get_districts($state_name);
     function get_sessions_by_pin($pincode,$date);
