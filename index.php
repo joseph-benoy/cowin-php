@@ -87,4 +87,29 @@
             error_log("get calender by pin error : {$error->getMessage()}",0);
         }
     }
+    function get_calender_by_district($state,$district,$date){
+        try{
+            $district_id = null;
+            foreach(get_districts($state) as $dist){
+                if($district==$dist['district_name']){
+                    $district_id = $dist['district_id'];
+                }
+            }
+            if($district_id==null){
+                return false;
+            }
+            else{
+                $curl = curl_init("https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByDistrict?district_id={$district_id}&date={$date}");
+                curl_setopt($curl,CURLOPT_RETURNTRANSFER,true);
+                $response = json_decode(curl_exec($curl),true);
+                if(array_key_exists('errorCode',$response)){
+                    throw new \Exception("{$response['error']}");
+                }
+                return $response['centers'];
+            }
+        }
+        catch(\Exception $error){
+            error_log("get calender by pin error : {$error->getMessage()}",0);
+        }
+    }
 ?>
