@@ -6,7 +6,7 @@
             curl_setopt($curl,CURLOPT_RETURNTRANSFER,true);
             return json_decode(curl_exec($curl),true)['states'];
         }
-        catch(Exception $error){
+        catch(\Exception $error){
             error_log("get_states error : {$error->getMessage()}",0);
         }
     }
@@ -31,7 +31,7 @@
             error_log("get_districts error : {$error->getMessage()}",0);
         }
     }
-    function get_slots_by_pin($pincode,$date)
+    function get_sessions_by_pin($pincode,$date)
     {
         try{
             $curl = curl_init("https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/findByPin?pincode={$pincode}&date={$date}");
@@ -47,7 +47,7 @@
             error_log("get_pincode error : {$error->getMessage()}",0);
         }
     }
-    function get_slot_by_district($state,$district,$date){
+    function get_sessions_by_district($state,$district,$date){
         try{
             $district_id = null;
             foreach(get_districts($state) as $dist){
@@ -71,6 +71,20 @@
         }
         catch(\Exception $error){
             error_log("get_slot_by_district error : {$error->getMessage()}",0);
+        }
+    }
+    function get_calender_by_pin($pincode,$date){
+        try{
+            $curl = curl_init("https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByPin?pincode={$pincode}&date={$date}");
+            curl_setopt($curl,CURLOPT_RETURNTRANSFER,true);
+            $response = json_decode(curl_exec($curl),true);
+            if(array_key_exists('errorCode',$response)){
+                throw new \Exception("{$response['error']}");
+            }
+            return $response['centers'];
+        }
+        catch(\Exception $error){
+            error_log("get calender by pin error : {$error->getMessage()}",0);
         }
     }
 ?>
