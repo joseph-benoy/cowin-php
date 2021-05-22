@@ -31,7 +31,8 @@
             error_log("get_districts error : {$error->getMessage()}",0);
         }
     }
-    function get_slots_by_pin($pincode,$date){
+    function get_slots_by_pin($pincode,$date)
+    {
         try{
             $curl = curl_init("https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/findByPin?pincode={$pincode}&date={$date}");
             curl_setopt($curl,CURLOPT_RETURNTRANSFER,true);
@@ -39,33 +40,37 @@
             if(array_key_exists('errorCode',$response)){
                 throw new \Exception("{$response['error']}");
             }
-            print_r($response);
+            $sessions = $response['sessions'];
+            return $sessions;
         }
         catch(\Exception $error){
-            error_log("get_states error : {$error->getMessage()}",0);
+            error_log("get_pincode error : {$error->getMessage()}",0);
         }
     }
-    get_slot_by_district($district,$date){
+    function get_slot_by_district($state,$district,$date){
         try{
             $district_id = null;
-            foreach(get_states() as $state){
-                if($state_name==$state['state_name']){
-                    $state_id = $state['state_id'];
+            foreach(get_districts($state) as $dist){
+                if($district==$dist['district_name']){
+                    $district_id = $dist['district_id'];
                 }
             }
-            if($state_id==null){
+            if($district_id==null){
                 return false;
-            }            
-            $curl = curl_init("https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/findByDistrict?district_id={$district_id}&date={$date}");
-            curl_setopt($curl,CURLOPT_RETURNTRANSFER,true);
-            $response = json_decode(curl_exec($curl),true);
-            if(array_key_exists('errorCode',$response)){
-                throw new \Exception("{$response['error']}");
             }
-            print_r($response);
+            else{
+                $curl = curl_init("https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/findByDistrict?district_id={$district_id}&date={$date}");
+                curl_setopt($curl,CURLOPT_RETURNTRANSFER,true);
+                $response = json_decode(curl_exec($curl),true);
+                if(array_key_exists('errorCode',$response)){
+                    throw new \Exception("{$response['error']}");
+                }
+                $sessions = $response['sessions'];
+                return $sessions;
+            }
         }
         catch(\Exception $error){
-            error_log("get_states error : {$error->getMessage()}",0);
+            error_log("get_slot_by_district error : {$error->getMessage()}",0);
         }
     }
 ?>
